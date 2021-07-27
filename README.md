@@ -1,3 +1,3 @@
-### This is the backend for my multiplayer chess game.
+Este es el BackEnd del juego de Ajedrez. 
 
-Link to the frontend: [Frontend](https://github.com/ProjectsByJackHe/multiplayer-chess-game)
+link del FrontEnd: 
