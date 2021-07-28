@@ -1,83 +1,67 @@
 
 
 /**
- * Here is where we should register event listeners and emitters. 
+ * Aquí es donde debemos registrar los detectores de eventos y emisores.
  */
 
 var io
 var gameSocket
-// gamesInSession stores an array of all active socket connections
+// gamesInSession almacena una matriz de todas las conexiones de socket activas
 var gamesInSession = []
 
 
 const initializeGame = (sio, socket) => {
     /**
-     * initializeGame sets up all the socket event listeners. 
+     * initializeGame configura todos los detectores de eventos de socket.
      */
 
-    // initialize global variables.
+    // inicializar variables globales.
     io = sio 
     gameSocket = socket 
 
-    // pushes this socket to an array which stores all the active sockets.
+    // inserta este socket en una matriz que almacena todos los sockets activos.
     gamesInSession.push(gameSocket)
 
-    // Run code when the client disconnects from their socket session. 
+    // Ejecute código cuando el cliente se desconecte de su sesión de socket.
     gameSocket.on("disconnect", onDisconnect)
 
-    // Sends new move to the other socket session in the same room. 
+    // Envía un nuevo movimiento a la otra sesión de socket en la misma sala.
     gameSocket.on("new move", newMove)
 
-    // User creates new game room after clicking 'submit' on the frontend
+    // El usuario crea una nueva sala de juegos después de hacer clic en 'enviar' en el frontend
     gameSocket.on("createNewGame", createNewGame)
 
-    // User joins gameRoom after going to a URL with '/game/:gameId' 
+    // El usuario se une a gameRoom después de ir a una URL con '/game/:gameId'
     gameSocket.on("playerJoinGame", playerJoinsGame)
 
     gameSocket.on('request username', requestUserName)
 
     gameSocket.on('recieved userName', recievedUserName)
 
-    // register event listeners for video chat app:
-    videoChatBackend()
+
 }
-
-
-function videoChatBackend() {
-    // main function listeners
-    gameSocket.on("callUser", (data) => {
-        io.to(data.userToCall).emit('hey', {signal: data.signalData, from: data.from});
-    })
-
-    gameSocket.on("acceptCall", (data) => {
-        io.to(data.to).emit('callAccepted', data.signal);
-    })
-}   
-
-
-
 function playerJoinsGame(idData) {
     /**
-     * Joins the given socket to a session with it's gameId
+     * Une el socket dado a una sesión con su gameId
      */
 
-    // A reference to the player's Socket.IO socket object
+    // Una referencia al objeto socket Socket.IO del jugador
     var sock = this
     
-    // Look up the room ID in the Socket.IO manager object.npm
+    // Busque el identificador de sala en el objeto de administrador de Socket.IO.npm
     var room = io.sockets.adapter.rooms[idData.gameId]
-   // console.log(room)
+   // consola.log(sala)
 
-    // If the room exists...
+    // Si la habitación existe...
     if (room === undefined) {
         this.emit('status' , "This game session does not exist." );
         return
     }
     if (room.length < 2) {
-        // attach the socket id to the data object.
+        // adjunte el identificador de socket al objeto de datos.
         idData.mySocketId = sock.id;
 
-        // Join the room
+        // Únete a la sala
         sock.join(idData.gameId);
 
         console.log(room.length)
@@ -86,30 +70,30 @@ function playerJoinsGame(idData) {
             io.sockets.in(idData.gameId).emit('start game', idData.userName)
         }
 
-        // Emit an event notifying the clients that the player has joined the room.
+        // Emita un evento notificando a los clientes que el jugador se ha unido a la sala.
         io.sockets.in(idData.gameId).emit('playerJoinedRoom', idData);
 
     } else {
-        // Otherwise, send an error message back to the player.
+        // De lo contrario, envíe un mensaje de error al reproductor.
         this.emit('status' , "There are already 2 people playing in this room." );
     }
 }
 
 
 function createNewGame(gameId) {
-    // Return the Room ID (gameId) and the socket ID (mySocketId) to the browser client
+    // Devolver el identificador de sala (gameId) y el identificador de socket (mySocketId) al cliente del explorador
     this.emit('createNewGame', {gameId: gameId, mySocketId: this.id});
 
-    // Join the Room and wait for the other player
+    // Únete a la habitación y espera al otro jugador
     this.join(gameId)
 }
 
 
 function newMove(move) {
     /**
-     * First, we need to get the room ID in which to send this message. 
-     * Next, we actually send this message to everyone except the sender
-     * in this room. 
+     * En primer lugar, tenemos que obtener el identificador de la sala en la que enviar este mensaje.
+     * A continuación, enviamos este mensaje a todos excepto al remitente
+     * En la sala.
      */
     
     const gameId = move.gameId 

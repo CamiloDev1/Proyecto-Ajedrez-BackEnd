@@ -1,16 +1,15 @@
 {
-  "name": "chess-game-backend",
+  "name": "proyecto-ajedrez-backend",
   "version": "1.0.0",
-  "description": "Backend portion of my multi-player chess game",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "test",
+    "test":  "echo \"Error: no se especifica ninguna prueba\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ProjectsByJackHe/multiplayer-chess-game-backend.git"
+    "url": "git+https://github.com/CamiloDev1/Proyecto-Ajedrez-BackEnd"
   },
   "dependencies": {
     "express": "4.17.1",
@@ -19,10 +18,6 @@
   "devDependencies": {
     "nodemon": "2.0.4"
   },
-  "author": "Jack He",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ProjectsByJackHe/multiplayer-chess-game-backend/issues"
-  },
-  "homepage": "https://github.com/ProjectsByJackHe/multiplayer-chess-game-backend#readme"
+  "author": "JoseCami,Angel,Pablo",
+  "license": "MIT"
 }

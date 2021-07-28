@@ -1,1 +1,2 @@
 Actualizacion de localhost
+Actualizacion de errores
